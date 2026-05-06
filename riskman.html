@@ -1,0 +1,198 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NovaCounsel | Dark Dashboard</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --accent: #38bdf8;
+            --danger: #f87171;
+            --success: #4ade80;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            margin: 0;
+        }
+
+        .container {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 550px;
+            border: 1px solid #334155;
+        }
+
+        h1 { color: var(--accent); text-align: center; margin-bottom: 5px; margin-top: 0; }
+        .tagline { text-align: center; color: var(--text-dim); font-size: 13px; margin-bottom: 25px; }
+
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .full-width { grid-column: span 2; }
+
+        label { display: block; font-size: 11px; color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            color: white;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        button {
+            width: 100%;
+            background: var(--accent);
+            color: #0f172a;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:hover { background: #7dd3fc; }
+
+        #analysisResult { margin-top: 25px; display: none; }
+
+        .status-box {
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .roadmap-card {
+            background: #334155;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .counselor-note {
+            border-left: 3px solid var(--accent);
+            padding-left: 10px;
+            margin-top: 15px;
+            font-style: italic;
+            color: var(--text-dim);
+            background: rgba(15, 23, 42, 0.4);
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>NovaCounsel</h1>
+    <p class="tagline">Student Risk Management System & Digital Twin</p>
+
+    <div class="input-grid">
+        <div class="full-width">
+            <label>Student Name</label>
+            <input type="text" id="name" placeholder="Naga Nitya">
+        </div>
+        <div>
+            <label>Attendance (%)</label>
+            <input type="number" id="att" placeholder="e.g. 45">
+        </div>
+        <div>
+            <label>Internal Marks (0-50)</label>
+            <input type="number" id="marks" placeholder="e.g. 45">
+        </div>
+        <div>
+            <label>Classes Missed (Current Month)</label>
+            <input type="number" id="missed" placeholder="e.g. 10">
+        </div>
+        <div>
+            <label>Pending Assignments</label>
+            <input type="number" id="pending" placeholder="e.g. 3">
+        </div>
+        <div class="full-width">
+            <label>Active Backlogs</label>
+            <select id="backlogs">
+                <option value="0">None</option>
+                <option value="1">1 Subject</option>
+                <option value="2">2+ Subjects</option>
+            </select>
+        </div>
+    </div>
+
+    <button onclick="analyzeRisk()">Analyze Digital Twin</button>
+
+    <div id="analysisResult">
+        <div id="statusIndicator" class="status-box"></div>
+        
+        <div class="roadmap-card">
+            <strong style="color: var(--accent); font-size: 16px;">Prescriptive Success Roadmap</strong>
+            <hr border="0" style="border-top: 1px solid #475569; margin: 10px 0;">
+            <p id="roadmapText"></p>
+            
+            <div class="counselor-note">
+                <strong>HOD / Parent Alert:</strong><br>
+                <span id="alertNote"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function analyzeRisk() {
+        const name = document.getElementById('name').value || "Student";
+        const att = document.getElementById('att').value;
+        const marks = document.getElementById('marks').value;
+        const missed = document.getElementById('missed').value;
+        const pending = document.getElementById('pending').value;
+        const backlogs = document.getElementById('backlogs').value;
+
+        const resultDiv = document.getElementById('analysisResult');
+        const statusBox = document.getElementById('statusIndicator');
+        const roadmap = document.getElementById('roadmapText');
+        const note = document.getElementById('alertNote');
+
+        resultDiv.style.display = "block";
+
+        // Advanced Logic for Risk Detection
+        // If attendance is low OR pending assignments are too high OR backlogs exist
+        let isCritical = false;
+        if (att < 75 || pending >= 3 || backlogs >= 2) {
+            isCritical = true;
+        }
+
+        if (isCritical) {
+            statusBox.style.backgroundColor = "rgba(248, 113, 113, 0.2)";
+            statusBox.style.color = "var(--danger)";
+            statusBox.innerText = "RISK STATUS: CRITICAL (Admin Intervention Required)";
+            
+            roadmap.innerHTML = "<b>Analysis:</b> Despite academic strength, your " + att + "% attendance and " + pending + " pending assignments create a high administrative risk.<br><br><b>Steps:</b><br>1. Submit all " + pending + " assignments within 48 hours.<br>2. Apply for compensatory attendance through extra lab work.<br>3. Schedule a review with the counselor regarding the " + missed + " missed classes.";
+            
+            note.innerText = "ALERT: Generating automated warning for " + name + ". Attendance (" + att + "%) is below mandatory university threshold.";
+        } else {
+            statusBox.style.backgroundColor = "rgba(74, 222, 128, 0.2)";
+            statusBox.style.color = "var(--success)";
+            statusBox.innerText = "RISK STATUS: STABLE";
+            
+            roadmap.innerHTML = "<b>Analysis:</b> Student is on a positive trajectory.<br><br><b>Steps:</b><br>1. Maintain current engagement.<br>2. Start preparing for the final portfolio submission.<br>3. Excellent work keeping pending tasks to " + pending + ".";
+            
+            note.innerText = "System recommendation: " + name + " is clear for the upcoming exam cycle.";
+        }
+    }
+</script>
+
+</body>
+</html>
